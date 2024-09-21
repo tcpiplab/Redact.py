@@ -19,28 +19,43 @@ This is not exactly a security tool; it is mostly intended for redacting secrets
     export GPT_API_KEY="***************************************************"
     ```
 
-
 ## Usage:
 
-1. Pipe text input into the script:
+### Pipe text input into the script:
 ```bash
     $ echo 'This is "sensitive data"' | python redact.py
     This is "*************"
 ```
 
-2. Alternatively, provide one or more file paths as arguments:
+### Alternatively, provide one or more file paths as arguments:
 ```bash
     $ python redact.py file1.txt file2.log
 ```
 This will read the contents of the specified files, redact any sensitive data enclosed in quotes, and print the redacted output to the console.
 
-3. If no file paths are provided, the script will read from standard input (stdin), allowing you to pipe data from other commands or sources.
+### Help Menu
 
-The redaction process replaces the entire content between the outermost single or double
-quotes with asterisks (`*`). Nested quotes within the outermost quotes are preserved.
+```bash
+$ redact.py --help
+usage: redact.py [-h] [-R] [files ...]
 
-**Note**: This script does not redact sensitive data that is not enclosed within quotes.
-It is recommended to review the redacted output carefully before sharing or storing it.
+Redact sensitive information from text.
+
+positional arguments:
+  files                 Files to process (if not specified, reads from stdin)
+
+options:
+  -h, --help            show this help message and exit
+  -R, --REDACT, --REDACTED
+                        Replace * with [REDACTED]
+```
+
+## Features
+
+- The redaction process replaces the entire content between the outermost single or double quotes or any high entropy string. Nested quotes within the outermost quotes are preserved.
+- Redacted strings are replaced with asterisks (`*`) by default.
+- Redacted strings are replaced with `[REDACTED]` if you provide the `-R` or `--REDACTED` options at runtime.
+- Review the redacted output carefully before sharing or storing it.
 
 
 ## Instead, you should actually *secure* your secrets
