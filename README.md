@@ -1,6 +1,6 @@
 # Redact Sensitive Data in STDOUT
 
-The `redact.py` script is designed to redact sensitive data enclosed within single or double quotes from text input. It can be used to sanitize logs, outputs, or other text data that may contain sensitive information such as API keys, passwords, or other confidential values.
+The `redact.py` script is designed to redact sensitive data enclosed within single or double quotes from text input. It will also detect and redact high entropy strings such as API tokens, cookie values, etc. It can be used to sanitize logs, outputs, or other text data that may contain sensitive information such as API keys, passwords, or other confidential values.
 
 ## Useful for pentesters
 
