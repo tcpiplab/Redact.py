@@ -1,13 +1,34 @@
 #!/usr/bin/env python3
 
 import sys
+import math
 
-def redact_text(text):
+def calculate_entropy(string):
+    """Calculate the Shannon entropy of a string."""
+    # Get probability of chars in string
+    prob = [float(string.count(c)) / len(string) for c in dict.fromkeys(list(string))]
+    # Calculate the entropy
+    entropy = - sum([p * math.log(p) / math.log(2.0) for p in prob])
+    return entropy
+
+
+def redact_text(text, entropy_threshold=4.5):
+    # Threshold of 4.5 seems to be ideal
     result = ''
     quote_stack = []
     redacting = False
+    current_word = ''
+    
     for i, c in enumerate(text):
         if c == "'" or c == '"':
+            if current_word:
+                # Check entropy of the current word before starting a new quote
+                if calculate_entropy(current_word) > entropy_threshold:
+                    result += '*' * len(current_word)
+                else:
+                    result += current_word
+                current_word = ''
+            
             if not quote_stack:
                 # Start of outermost quoted string
                 quote_stack.append(c)
@@ -25,8 +46,25 @@ def redact_text(text):
         elif redacting:
             # Replace content with '*' if inside outermost quotes
             result += '*'
-        else:
+        elif c.isspace():
+            # End of a word, check its entropy
+            if current_word:
+                if calculate_entropy(current_word) > entropy_threshold:
+                    result += '*' * len(current_word)
+                else:
+                    result += current_word
+                current_word = ''
             result += c
+        else:
+            current_word += c
+    
+    # Check the last word if exists
+    if current_word:
+        if calculate_entropy(current_word) > entropy_threshold:
+            result += '*' * len(current_word)
+        else:
+            result += current_word
+    
     return result
 
 
